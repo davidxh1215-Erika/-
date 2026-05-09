@@ -16,18 +16,21 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5',
+        model: 'claude-sonnet-4-5',
         max_tokens: 8000,
         messages: messages
       })
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const err = await response.text();
-      return res.status(response.status).json({ error: err });
+      return res.status(response.status).json({ 
+        error: data.error?.message || '调用失败',
+        details: data
+      });
     }
 
-    const data = await response.json();
     return res.status(200).json(data);
 
   } catch (err) {
